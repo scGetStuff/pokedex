@@ -10,3 +10,9 @@ go build
 ./pokedex
 go run .
 ```
+
+# test
+
+```sh
+go test
+```
