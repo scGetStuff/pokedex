@@ -17,6 +17,7 @@ func main() {
 	input := bufio.NewScanner(os.Stdin)
 
 	for {
+		fmt.Println()
 		fmt.Print(prompt)
 		if input.Scan() {
 			stuff := cleanInput(input.Text())
