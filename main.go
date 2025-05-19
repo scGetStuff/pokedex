@@ -11,7 +11,10 @@ import (
 
 func main() {
 	// fmt.Println("Hello, World!")
+	startRepl()
+}
 
+func startRepl() {
 	const prompt = "Pokedex > "
 	cmds := commands.GetCommandsMap()
 	input := bufio.NewScanner(os.Stdin)
