@@ -6,12 +6,17 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
+
+	"github.com/scGetStuff/pokedex/internal/pokecache"
 )
 
 const (
 	baseURL  = "https://pokeapi.co/api/v2"
 	pageSize = 20
 )
+
+var cache = pokecache.NewCache(5 * time.Second)
 
 // mapPage: 0 based multiplier for offset
 func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
@@ -20,23 +25,27 @@ func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
 
 	url := fmt.Sprintf("%s/location-area?limit=%v&offset=%v", baseURL, pageSize, pageSize*mapPage)
 
-	resp, err := http.Get(url)
-	if err != nil {
-		return LocationArea{}, err
-	}
-	defer resp.Body.Close()
+	var data []byte
+	data, hit := cache.Get(url)
+	if !hit {
+		resp, err := http.Get(url)
+		if err != nil {
+			return LocationArea{}, err
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode > 299 {
-		return LocationArea{}, fmt.Errorf("response failed with status code: %d", resp.StatusCode)
-	}
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return LocationArea{}, err
+		if resp.StatusCode > 299 {
+			return LocationArea{}, fmt.Errorf("response failed with status code: %d", resp.StatusCode)
+		}
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return LocationArea{}, err
+		}
+		cache.Add(url, data)
 	}
 
 	area := LocationArea{}
-	if err = json.Unmarshal(data, &area); err != nil {
+	if err := json.Unmarshal(data, &area); err != nil {
 		return LocationArea{}, err
 	}
 
