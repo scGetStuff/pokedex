@@ -18,6 +18,25 @@ const (
 
 var cache = pokecache.NewCache(5 * time.Second)
 
+func getBytes(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode > 299 {
+		return []byte{}, fmt.Errorf("response failed with status code: %d", resp.StatusCode)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return data, nil
+}
+
 // mapPage: 0 based multiplier for offset
 func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
 	// https://pokeapi.co/api/v2/location-area
@@ -26,42 +45,39 @@ func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
 	url := fmt.Sprintf("%s/location-area?limit=%v&offset=%v", baseURL, pageSize, pageSize*mapPage)
 
 	var data []byte
-	data, hit := cache.Get(url)
+	var hit bool
+	data, hit = cache.Get(url)
 	if !hit {
-		resp, err := http.Get(url)
+		// this is important
+		// `data, err :=` would create a block variable and fuck everything up
+		var err error
+		data, err = getBytes(url)
 		if err != nil {
 			return LocationArea{}, err
 		}
-		defer resp.Body.Close()
 
-		if resp.StatusCode > 299 {
-			return LocationArea{}, fmt.Errorf("response failed with status code: %d", resp.StatusCode)
-		}
-		data, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return LocationArea{}, err
-		}
 		cache.Add(url, data)
 	}
+	fmt.Println(string(data))
 
 	area := LocationArea{}
 	if err := json.Unmarshal(data, &area); err != nil {
 		return LocationArea{}, err
 	}
 
-	fmt.Println(url)
+	// fmt.Println(url)
 
 	// fmt.Print(area)
-	// fmt.Print(pretty(string(data)))
+	// fmt.Print(PrettyJSON(string(data)))
 
 	return area, nil
 }
 
-func Pretty(str string) (string, error) {
-	var prettyJSON bytes.Buffer
-	if err := json.Indent(&prettyJSON, []byte(str), "", "    "); err != nil {
+func PrettyJSON(str string) (string, error) {
+	var bytesBuffer bytes.Buffer
+	if err := json.Indent(&bytesBuffer, []byte(str), "", "    "); err != nil {
 		return "", err
 	}
 
-	return prettyJSON.String(), nil
+	return bytesBuffer.String(), nil
 }

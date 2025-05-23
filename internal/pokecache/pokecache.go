@@ -1,7 +1,6 @@
 package pokecache
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -46,11 +45,11 @@ func (c *Cache) reapLoop() {
 	for {
 		t := <-ticker.C
 		_ = t
-		fmt.Println("Current time: ", t.Format(time.DateTime))
+		// fmt.Println("Current time: ", t.Format(time.DateTime))
 		now := time.Now()
 		for k, v := range c.Stuff {
 			delta := now.Sub(v.CreatedAt)
-			fmt.Println("Seconds: ", delta.Seconds())
+			// fmt.Println("Seconds: ", delta.Seconds())
 			if delta > c.Interval {
 				c.MU.Lock()
 				delete(c.Stuff, k)
