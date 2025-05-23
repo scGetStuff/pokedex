@@ -26,6 +26,10 @@ func GetCommandsMap() map[string]CliCommand {
 				Description: "Displays 20 Pokemon world locations at a time",
 				Callback:    commandMapb,
 			},
+			"explore": {
+				Description: "List Pokemon in a given area",
+				Callback:    commandExplore,
+			},
 		}
 
 		for k := range commands {

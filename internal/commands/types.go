@@ -4,14 +4,13 @@ package commands
 // it's not like there is a display name vs command name
 type CliCommand struct {
 	Description string
-	Callback    func() error
+	Callback    func(cmdArgs []string) error
 }
 
-// TOOD: not doing it
-// I hate the idea of adding config param to callback function
-// it is only used by the map command
-// no reason to change signature for all becauses of 1
-type Config struct {
-	NextURL     string
-	PreviousURL string
-}
+// not doing it
+// I hate the idea of adding a parameter for one command to all the callback functions
+// I did add an args array to handle parameters to commands
+// type Config struct {
+// 	NextURL     string
+// 	PreviousURL string
+// }

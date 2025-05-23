@@ -8,8 +8,8 @@ import (
 
 var mapPage = -1
 
-func commandMap() error {
-	area, err := pokewrap.GetLocationAreaJSON(mapPage + 1)
+func commandMap(cmdArgs []string) error {
+	area, err := pokewrap.GetLocationAreaPage(mapPage + 1)
 	if err != nil {
 		return err
 	}
@@ -23,12 +23,12 @@ func commandMap() error {
 	return nil
 }
 
-func commandMapb() error {
+func commandMapb(cmdArgs []string) error {
 	if mapPage < 1 {
 		return nil
 	}
 
-	area, err := pokewrap.GetLocationAreaJSON(mapPage - 1)
+	area, err := pokewrap.GetLocationAreaPage(mapPage - 1)
 	if err != nil {
 		return err
 	}

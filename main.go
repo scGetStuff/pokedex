@@ -28,6 +28,7 @@ func startRepl() {
 				continue
 			}
 			first := stuff[0]
+			cmdArgs := stuff[1:]
 			// fmt.Printf("Your command was: %s\n", first)
 
 			command, ok := cmds[first]
@@ -36,7 +37,7 @@ func startRepl() {
 				continue
 			}
 
-			err := command.Callback()
+			err := command.Callback(cmdArgs)
 			if err != nil {
 				fmt.Print(err)
 			}

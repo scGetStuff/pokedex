@@ -38,8 +38,7 @@ func getBytes(url string) ([]byte, error) {
 }
 
 // mapPage: 0 based multiplier for offset
-func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
-	// https://pokeapi.co/api/v2/location-area
+func GetLocationAreaPage(mapPage int) (LocationAreaPage, error) {
 	// https://pokeapi.co/api/v2/location-area?limit=20&offset=0
 
 	url := fmt.Sprintf("%s/location-area?limit=%v&offset=%v", baseURL, pageSize, pageSize*mapPage)
@@ -53,24 +52,49 @@ func GetLocationAreaJSON(mapPage int) (LocationArea, error) {
 		var err error
 		data, err = getBytes(url)
 		if err != nil {
-			return LocationArea{}, err
+			return LocationAreaPage{}, err
 		}
 
 		cache.Add(url, data)
 	}
-	fmt.Println(string(data))
+	// fmt.Println(PrettyJSON(string(data)))
 
-	area := LocationArea{}
+	area := LocationAreaPage{}
 	if err := json.Unmarshal(data, &area); err != nil {
-		return LocationArea{}, err
+		return LocationAreaPage{}, err
 	}
 
-	// fmt.Println(url)
-
-	// fmt.Print(area)
-	// fmt.Print(PrettyJSON(string(data)))
-
 	return area, nil
+}
+
+// name or ID will work
+func GetLocationAreaEncounter(loc string) (LocationAreaEncounter, error) {
+	// https://pokeapi.co/api/v2/location-area/sunyshore-city-area
+
+	url := fmt.Sprintf("%s/location-area/%s", baseURL, loc)
+
+	var data []byte
+	var hit bool
+	data, hit = cache.Get(url)
+	if !hit {
+		// this is important
+		// `data, err :=` would create a block variable and fuck everything up
+		var err error
+		data, err = getBytes(url)
+		if err != nil {
+			return LocationAreaEncounter{}, err
+		}
+
+		cache.Add(url, data)
+	}
+	// fmt.Println(PrettyJSON(string(data)))
+
+	encounter := LocationAreaEncounter{}
+	if err := json.Unmarshal(data, &encounter); err != nil {
+		return LocationAreaEncounter{}, err
+	}
+
+	return encounter, nil
 }
 
 func PrettyJSON(str string) (string, error) {
