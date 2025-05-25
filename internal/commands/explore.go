@@ -16,7 +16,7 @@ func commandExplore(cmdArgs []string) error {
 		return err
 	}
 
-	fmt.Printf("Exploring %s...\n", cmdArgs[0])
+	fmt.Printf("Exploring %s...\n", encounter.Name)
 	fmt.Println("Found Pokemon:")
 
 	for i := range encounter.PokemonEncounters {

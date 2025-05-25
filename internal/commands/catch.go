@@ -7,6 +7,8 @@ import (
 	"github.com/scGetStuff/pokedex/internal/pokewrap"
 )
 
+// TODO: all the package variables should be pulled into a User struct
+// first pass single thread, not a requirement, but this sucks
 var pokemons = map[string]pokewrap.Pokemon{}
 
 func commandCatch(cmdArgs []string) error {
@@ -27,15 +29,11 @@ func commandCatch(cmdArgs []string) error {
 	num := rand.Intn(100)
 
 	if num > 40 {
-		pokemons[cmdArgs[0]] = vermin
-		fmt.Println(cmdArgs[0], " was caught!")
+		pokemons[vermin.Name] = vermin
+		fmt.Println(vermin.Name, " was caught!")
 	} else {
-		fmt.Println(cmdArgs[0], " escaped!")
+		fmt.Println(vermin.Name, " escaped!")
 	}
-
-	// for k := range pokemons {
-	// 	fmt.Println(k)
-	// }
 
 	return nil
 }
