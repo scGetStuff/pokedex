@@ -23,10 +23,7 @@ func commandCatch(cmdArgs []string) error {
 		return err
 	}
 
-	// TODO: no spec, I have no idea what the range is, so no idea how to use it
-	base := vermin.BaseExperience
-	_ = base
-	num := rand.Intn(100)
+	num := rand.Intn(vermin.BaseExperience)
 
 	if num > 40 {
 		pokemons[vermin.Name] = vermin
