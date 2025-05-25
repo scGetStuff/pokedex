@@ -24,13 +24,13 @@ func commandCatch(cmdArgs []string) error {
 	}
 
 	num := rand.Intn(vermin.BaseExperience)
-
 	if num > 40 {
-		pokemons[vermin.Name] = vermin
-		fmt.Println(vermin.Name, " was caught!")
-	} else {
 		fmt.Println(vermin.Name, " escaped!")
+		return nil
 	}
+
+	pokemons[vermin.Name] = vermin
+	fmt.Println(vermin.Name, " was caught!")
 
 	return nil
 }
