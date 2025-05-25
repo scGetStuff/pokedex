@@ -30,6 +30,10 @@ func GetCommandsMap() map[string]CliCommand {
 				Description: "List Pokemon in a given area",
 				Callback:    commandExplore,
 			},
+			"catch": {
+				Description: "Catch a Pokemon",
+				Callback:    commandCatch,
+			},
 		}
 
 		for k := range commands {

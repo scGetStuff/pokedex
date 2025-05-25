@@ -97,6 +97,36 @@ func GetLocationAreaEncounter(loc string) (LocationAreaEncounter, error) {
 	return encounter, nil
 }
 
+// https://pokeapi.co/api/v2/pokemon/{id or name}/
+func GetPokemon(name string) (Pokemon, error) {
+	// https://pokeapi.co/api/v2/pokemon/pikachu/
+
+	url := fmt.Sprintf("%s/pokemon/%s", baseURL, name)
+
+	var data []byte
+	var hit bool
+	data, hit = cache.Get(url)
+	if !hit {
+		// this is important
+		// `data, err :=` would create a block variable and fuck everything up
+		var err error
+		data, err = getBytes(url)
+		if err != nil {
+			return Pokemon{}, err
+		}
+
+		cache.Add(url, data)
+	}
+	// fmt.Println(PrettyJSON(string(data)))
+
+	vermin := Pokemon{}
+	if err := json.Unmarshal(data, &vermin); err != nil {
+		return Pokemon{}, err
+	}
+
+	return vermin, nil
+}
+
 func PrettyJSON(str string) (string, error) {
 	var bytesBuffer bytes.Buffer
 	if err := json.Indent(&bytesBuffer, []byte(str), "", "    "); err != nil {
